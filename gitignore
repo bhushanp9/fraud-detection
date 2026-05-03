@@ -1,0 +1,49 @@
+# ─────────────────────────────────────────
+# Dataset (too large for GitHub — 150MB)
+# Download from: https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud
+# ─────────────────────────────────────────
+creditcard.csv
+*.csv
+
+# ─────────────────────────────────────────
+# Python
+# ─────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# ─────────────────────────────────────────
+# Jupyter Notebooks checkpoints
+# ─────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ─────────────────────────────────────────
+# Environment & secrets
+# ─────────────────────────────────────────
+.env
+.env.local
+*.env
+
+# ─────────────────────────────────────────
+# OS junk
+# ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─────────────────────────────────────────
+# IDE / Editor
+# ─────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
