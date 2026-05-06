@@ -29,6 +29,7 @@ model = load_model()
 # =========================================
 st.markdown("""
 <style>
+
 .main {
     background-color: #0E1117;
 }
@@ -56,6 +57,7 @@ st.markdown("""
     text-align: center;
     margin-top: 20px;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -95,17 +97,17 @@ st.sidebar.title("⚙ Instructions")
 
 st.sidebar.write("""
 ### Manual Prediction
-1. Enter all feature values.
-2. Click Predict Transaction.
+1. Enter transaction values
+2. Click Predict Transaction
 
 ### CSV Prediction
-1. Upload CSV file.
-2. Click Predict Uploaded Data.
-3. Download prediction results.
+1. Upload CSV file
+2. Click Predict Uploaded Data
+3. Download prediction results
 """)
 
 # =========================================
-# FEATURE INPUT SECTION
+# FEATURES
 # =========================================
 features = [
     'Time', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9',
@@ -114,6 +116,9 @@ features = [
     'V28', 'Amount'
 ]
 
+# =========================================
+# MANUAL INPUT SECTION
+# =========================================
 st.subheader("📝 Manual Transaction Prediction")
 
 col1, col2, col3 = st.columns(3)
@@ -137,31 +142,50 @@ for i, feature in enumerate(features):
 # =========================================
 if st.button("🔍 Predict Transaction"):
 
-    try:
-        input_array = np.array(input_data).reshape(1, -1)
+    # Validation
+    if all(value == 0.0 for value in input_data):
 
-        prediction = model.predict(input_array)
+        st.warning("⚠ Please enter transaction values before prediction.")
 
-        st.subheader("📊 Prediction Result")
+    else:
 
-        if prediction[0] == 1:
+        try:
 
-            st.markdown("""
-            <div class='result-box' style='background-color:#ffebee; color:#d32f2f;'>
+            # Convert to numpy array
+            input_array = np.array(input_data).reshape(1, -1)
+
+            # Predict
+            prediction = model.predict(input_array)
+
+            st.subheader("📊 Prediction Result")
+
+            # Fraud
+            if prediction[0] == 1:
+
+                st.markdown("""
+                <div class='result-box'
+                style='background-color:#ffebee; color:#d32f2f;'>
+
                 🚨 Fraudulent Transaction Detected
-            </div>
-            """, unsafe_allow_html=True)
 
-        else:
+                </div>
+                """, unsafe_allow_html=True)
 
-            st.markdown("""
-            <div class='result-box' style='background-color:#e8f5e9; color:#2e7d32;'>
+            # Genuine
+            else:
+
+                st.markdown("""
+                <div class='result-box'
+                style='background-color:#e8f5e9; color:#2e7d32;'>
+
                 ✅ Genuine Transaction
-            </div>
-            """, unsafe_allow_html=True)
 
-    except Exception as e:
-        st.error(f"Prediction Error: {e}")
+                </div>
+                """, unsafe_allow_html=True)
+
+        except Exception as e:
+
+            st.error(f"Prediction Error: {e}")
 
 # =========================================
 # CSV FILE PREDICTION
@@ -178,6 +202,8 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
 
     try:
+
+        # Read CSV
         df = pd.read_csv(uploaded_file)
 
         st.write("### Uploaded Dataset")
@@ -185,6 +211,7 @@ if uploaded_file is not None:
 
         st.write(f"Dataset Shape: {df.shape}")
 
+        # Predict Button
         if st.button("🚀 Predict Uploaded Data"):
 
             predictions = model.predict(df)
@@ -198,32 +225,34 @@ if uploaded_file is not None:
 
             st.success("✅ Prediction Completed Successfully")
 
+            # Metrics
             fraud_count = (df["Prediction"] == "Fraud").sum()
             genuine_count = (df["Prediction"] == "Genuine").sum()
 
-            # Metrics
-            col1, col2 = st.columns(2)
+            metric1, metric2 = st.columns(2)
 
-            with col1:
+            with metric1:
                 st.metric("🚨 Fraud Transactions", fraud_count)
 
-            with col2:
+            with metric2:
                 st.metric("✅ Genuine Transactions", genuine_count)
 
+            # Show Results
             st.write("### Prediction Results")
             st.dataframe(df)
 
             # Download CSV
-            csv = df.to_csv(index=False).encode('utf-8')
+            csv = df.to_csv(index=False).encode("utf-8")
 
             st.download_button(
-                label="📥 Download Prediction Results",
+                label="📥 Download Results CSV",
                 data=csv,
                 file_name="fraud_prediction_results.csv",
                 mime="text/csv"
             )
 
     except Exception as e:
+
         st.error(f"Error Processing File: {e}")
 
 # =========================================
@@ -233,7 +262,10 @@ st.divider()
 
 st.markdown("""
 <center>
+
 <h4>💡 Fraud Detection Using Machine Learning</h4>
+
 <p>Built with Streamlit</p>
+
 </center>
 """, unsafe_allow_html=True)
